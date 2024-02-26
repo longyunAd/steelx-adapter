@@ -32,7 +32,7 @@ import com.longyun.udx.sdk.reward.UDXRewardedRequest;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SteelXMediationAdapter
+public class UDXMediationAdapter
         extends MediationAdapterBase
         implements MaxSignalProvider, MaxInterstitialAdapter, MaxRewardedAdapter
 {
@@ -47,7 +47,7 @@ public class SteelXMediationAdapter
     private InterstitialAdListener interstitialAdListener;
     private RewardedAdListener rewardedAdListener;
 
-    public SteelXMediationAdapter(AppLovinSdk sdk) {
+    public UDXMediationAdapter(AppLovinSdk sdk) {
         super(sdk);
     }
 

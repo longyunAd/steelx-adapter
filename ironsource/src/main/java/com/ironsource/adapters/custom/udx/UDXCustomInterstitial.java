@@ -14,10 +14,11 @@ import com.longyun.udx.sdk.UDXAd;
 import com.longyun.udx.sdk.UDXError;
 import com.longyun.udx.sdk.inters.UDXInterstitialAd;
 import com.longyun.udx.sdk.inters.UDXInterstitialAdListener;
+import com.longyun.udx.sdk.inters.UDXInterstitialRequest;
 
 public class UDXCustomInterstitial extends BaseInterstitial<UDXCustomAdapter> {
 
-    private final String TAG = "SteelXCustomInterstitial";
+    private final String TAG = UDXCustomInterstitial.class.getSimpleName();
     private UDXAd mAd;
     private boolean isAdAvailable;
     private Activity mActivity;

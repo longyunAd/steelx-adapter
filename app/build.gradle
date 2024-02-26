@@ -15,7 +15,6 @@ android {
     }
     buildTypes {
         debug {
-            multiDexEnabled true
             minifyEnabled false
         }
         release {

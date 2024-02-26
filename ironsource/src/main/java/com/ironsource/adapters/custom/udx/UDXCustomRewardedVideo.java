@@ -18,7 +18,7 @@ import com.longyun.udx.sdk.reward.UDXRewardedAdListener;
 
 public class UDXCustomRewardedVideo extends BaseRewardedVideo<UDXCustomAdapter>{
 
-    private final String TAG = "SteelXCustomRewardedVideo";
+    private final String TAG = UDXCustomRewardedVideo.class.getSimpleName();
     private UDXAd mAd;
     private boolean isAdAvailable;
     private Activity mActivity;

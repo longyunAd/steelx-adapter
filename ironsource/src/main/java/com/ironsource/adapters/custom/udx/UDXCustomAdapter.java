@@ -28,14 +28,14 @@ public class UDXCustomAdapter extends BaseAdapter {
 
             @Override
             public void success() {
-                Log.i(TAG, "steelx init success: ");
+                Log.i(TAG, "udx init success: ");
                 if(networkInitializationListener != null)
                     networkInitializationListener.onInitSuccess();
             }
 
             @Override
             public void fail(int code, String msg) {
-                Log.i(TAG, "steelx init fail: " + code + " " + msg);
+                Log.i(TAG, "udx init fail: " + code + " " + msg);
                 if(networkInitializationListener != null)
                     networkInitializationListener.onInitFailed(code, msg);
             }
