@@ -1,4 +1,4 @@
-package com.ironsource.adapters.custom.steelx;
+package com.ironsource.adapters.custom.udx;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,22 +9,22 @@ import androidx.annotation.Nullable;
 import com.ironsource.mediationsdk.adunit.adapter.BaseAdapter;
 import com.ironsource.mediationsdk.adunit.adapter.listener.NetworkInitializationListener;
 import com.ironsource.mediationsdk.adunit.adapter.utility.AdData;
-import com.longyun.steelx.sdk.SXConfig;
-import com.longyun.steelx.sdk.SXSdk;
+import com.longyun.udx.sdk.UDXConfig;
+import com.longyun.udx.sdk.UDXSdk;
 
-public class SteelXCustomAdapter extends BaseAdapter {
+public class UDXCustomAdapter extends BaseAdapter {
 
-    private static final String TAG = "SteelXCustomAdapter";
+    private static final String TAG = UDXCustomAdapter.class.getCanonicalName();
 
     @Override
     public void init(@NonNull AdData adData, @NonNull Context context, @Nullable NetworkInitializationListener networkInitializationListener) {
        String appId = (String) adData.getConfiguration().get("appID");
 //        Log.i(TAG, "init->appId:"+appId +" "+ GsonUtils.toJson(adData));
 
-        SXConfig config = new SXConfig.Builder()
+        UDXConfig config = new UDXConfig.Builder()
                 .setAppId(appId)
                 .build();
-        SXSdk.init(context, config, new SXSdk.SLInitCallback() {
+        UDXSdk.init(context, config, new UDXSdk.UDXInitCallback() {
 
             @Override
             public void success() {
@@ -45,7 +45,7 @@ public class SteelXCustomAdapter extends BaseAdapter {
     @Nullable
     @Override
     public String getNetworkSDKVersion() {
-        return SXSdk.getSDKVersion();
+        return UDXSdk.getSDKVersion();
     }
 
     @NonNull

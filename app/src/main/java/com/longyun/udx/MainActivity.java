@@ -1,8 +1,10 @@
-package com.longyun.steelx;
+package com.longyun.udx;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.longyun.udx.R;
 
 public class MainActivity extends AppCompatActivity {
 

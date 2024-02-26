@@ -17,18 +17,18 @@ import com.applovin.mediation.adapter.parameters.MaxAdapterResponseParameters;
 import com.applovin.mediation.adapter.parameters.MaxAdapterSignalCollectionParameters;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkUtils;
-import com.longyun.steelx.sdk.BidManager;
-import com.longyun.steelx.sdk.SXAd;
-import com.longyun.steelx.sdk.SXConfig;
-import com.longyun.steelx.sdk.SXError;
-import com.longyun.steelx.sdk.SXSdk;
-import com.longyun.steelx.sdk.inters.SXInterstitialAd;
-import com.longyun.steelx.sdk.inters.SXInterstitialAdListener;
-import com.longyun.steelx.sdk.inters.SXInterstitialRequest;
-import com.longyun.steelx.sdk.reward.SXReward;
-import com.longyun.steelx.sdk.reward.SXRewardedAd;
-import com.longyun.steelx.sdk.reward.SXRewardedAdListener;
-import com.longyun.steelx.sdk.reward.SXRewardedRequest;
+import com.longyun.udx.sdk.BidManager;
+import com.longyun.udx.sdk.UDXAd;
+import com.longyun.udx.sdk.UDXConfig;
+import com.longyun.udx.sdk.UDXError;
+import com.longyun.udx.sdk.UDXSdk;
+import com.longyun.udx.sdk.inters.UDXInterstitialAd;
+import com.longyun.udx.sdk.inters.UDXInterstitialAdListener;
+import com.longyun.udx.sdk.inters.UDXInterstitialRequest;
+import com.longyun.udx.sdk.reward.UDXReward;
+import com.longyun.udx.sdk.reward.UDXRewardedAd;
+import com.longyun.udx.sdk.reward.UDXRewardedAdListener;
+import com.longyun.udx.sdk.reward.UDXRewardedRequest;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,8 +41,8 @@ public class SteelXMediationAdapter
     private static final AtomicBoolean        initialized                        = new AtomicBoolean();
     private static InitializationStatus status;
 
-    private SXInterstitialAd interstitialAd;
-    private SXRewardedAd rewardedAd;
+    private UDXInterstitialAd interstitialAd;
+    private UDXRewardedAd rewardedAd;
 
     private InterstitialAdListener interstitialAdListener;
     private RewardedAdListener rewardedAdListener;
@@ -81,11 +81,11 @@ public class SteelXMediationAdapter
 //                builder.setDoNotSell( isDoNotSell ? 1 : 0 );
 //            }
 
-            SXConfig config = new SXConfig.Builder()
+            UDXConfig config = new UDXConfig.Builder()
                     .setAppId(appId)
                     .setDebug(parameters.isTesting())
                     .build();
-            SXSdk.init(activity.getApplicationContext(), config, new SXSdk.SLInitCallback() {
+            UDXSdk.init(activity.getApplicationContext(), config, new UDXSdk.UDXInitCallback() {
 
                 @Override
                 public void success() {
@@ -114,7 +114,7 @@ public class SteelXMediationAdapter
     @Override
     public String getSdkVersion()
     {
-        return SXSdk.getSDKVersion();
+        return UDXSdk.getSDKVersion();
     }
 
     @Override
@@ -156,11 +156,11 @@ public class SteelXMediationAdapter
         boolean isBidding = AppLovinSdkUtils.isValidString( bidResponse );
         log( "Loading " + ( isBidding ? "bidding " : "" ) + "interstitial ad for code id \"" + codeId + "\"..." );
 
-        SXInterstitialRequest request = new SXInterstitialRequest();
+        UDXInterstitialRequest request = new UDXInterstitialRequest();
         request.setUserId(getWrappingSdk().getUserIdentifier());
         interstitialAdListener = new InterstitialAdListener( codeId, listener );
 
-        interstitialAd = new SXInterstitialAd();
+        interstitialAd = new UDXInterstitialAd();
         interstitialAd.loadAd( codeId, request, interstitialAdListener);
     }
 
@@ -191,7 +191,7 @@ public class SteelXMediationAdapter
 //        Map<String, Object> extraInfo = new HashMap<>();
 //        extraInfo.put( "user_id", getWrappingSdk().getUserIdentifier() );
 
-        SXRewardedRequest request = new SXRewardedRequest();
+        UDXRewardedRequest request = new UDXRewardedRequest();
         request.setUserId(getWrappingSdk().getUserIdentifier());
 //        request.setExtraInfo( extraInfo );
 //
@@ -202,7 +202,7 @@ public class SteelXMediationAdapter
 
         rewardedAdListener = new RewardedAdListener( codeId, listener );
 //        PAGRewardedAd.loadAd( codeId, request, rewardedAdListener );
-        rewardedAd = new SXRewardedAd();
+        rewardedAd = new UDXRewardedAd();
         rewardedAd.loadAd( codeId, request, rewardedAdListener);
     }
 
@@ -264,7 +264,7 @@ public class SteelXMediationAdapter
     //endregion
 
     private class InterstitialAdListener
-            implements SXInterstitialAdListener
+            implements UDXInterstitialAdListener
     {
         private final String                         codeId;
         private final MaxInterstitialAdapterListener listener;
@@ -276,7 +276,7 @@ public class SteelXMediationAdapter
         }
 
         @Override
-        public void onAdLoaded(final SXAd ad)
+        public void onAdLoaded(final UDXAd ad)
         {
             if ( ad == null )
             {
@@ -287,46 +287,46 @@ public class SteelXMediationAdapter
             }
 
             log( "Interstitial ad loaded: " + codeId );
-            interstitialAd = (SXInterstitialAd) ad;
+            interstitialAd = (UDXInterstitialAd) ad;
 
             listener.onInterstitialAdLoaded();
         }
 
         @Override
-        public void onAdFailedToLoad(String adUnitId, SXError error) {
+        public void onAdFailedToLoad(String adUnitId, UDXError error) {
             MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
             log( "Interstitial ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onInterstitialAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayFailed(SXAd ad, SXError error) {
+        public void onAdDisplayFailed(UDXAd ad, UDXError error) {
             MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
             log( "Interstitial ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onInterstitialAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayed(SXAd ad) {
+        public void onAdDisplayed(UDXAd ad) {
             log( "Interstitial ad displayed: " + codeId );
             listener.onInterstitialAdDisplayed();
         }
 
         @Override
-        public void onAdClicked(SXAd ad) {
+        public void onAdClicked(UDXAd ad) {
             log( "Interstitial ad clicked: " + codeId );
             listener.onInterstitialAdClicked();
         }
 
         @Override
-        public void onAdHidden(SXAd ad) {
+        public void onAdHidden(UDXAd ad) {
             log( "Interstitial ad hidden: " + codeId );
             listener.onInterstitialAdHidden();
         }
     }
 
     private class RewardedAdListener
-            implements SXRewardedAdListener
+            implements UDXRewardedAdListener
     {
         private final String                     codeId;
         private final MaxRewardedAdapterListener listener;
@@ -340,7 +340,7 @@ public class SteelXMediationAdapter
         }
 
         @Override
-        public void onAdLoaded(SXAd ad) {
+        public void onAdLoaded(UDXAd ad) {
             if ( ad == null )
             {
                 log( "Rewarded ad" + "(" + codeId + ")" + " NO FILL'd" );
@@ -350,40 +350,40 @@ public class SteelXMediationAdapter
             }
 
             log( "Rewarded ad loaded: " + codeId );
-            rewardedAd = (SXRewardedAd) ad;
+            rewardedAd = (UDXRewardedAd) ad;
 
             listener.onRewardedAdLoaded();
         }
 
         @Override
-        public void onAdFailedToLoad(String adUnitId, SXError error) {
+        public void onAdFailedToLoad(String adUnitId, UDXError error) {
             MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
             log( "Rewarded ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onRewardedAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayFailed(SXAd ad, SXError error) {
+        public void onAdDisplayFailed(UDXAd ad, UDXError error) {
             MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
             log( "Rewarded ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onRewardedAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayed(SXAd ad) {
+        public void onAdDisplayed(UDXAd ad) {
             log( "Rewarded ad displayed: " + codeId );
 
             listener.onRewardedAdDisplayed();
         }
 
         @Override
-        public void onAdClicked(SXAd ad) {
+        public void onAdClicked(UDXAd ad) {
             log( "Rewarded ad clicked: " + codeId );
             listener.onRewardedAdClicked();
         }
 
         @Override
-        public void onAdHidden(SXAd ad) {
+        public void onAdHidden(UDXAd ad) {
             log( "Rewarded ad hidden: " + codeId );
 
             listener.onRewardedAdVideoCompleted();
@@ -399,17 +399,17 @@ public class SteelXMediationAdapter
         }
 
         @Override
-        public void onRewardedVideoStarted(SXAd ad) {
+        public void onRewardedVideoStarted(UDXAd ad) {
             listener.onRewardedAdVideoStarted();
         }
 
         @Override
-        public void onRewardedVideoCompleted(SXAd ad) {
+        public void onRewardedVideoCompleted(UDXAd ad) {
 
         }
 
         @Override
-        public void onUserRewarded(SXAd ad, SXReward reward) {
+        public void onUserRewarded(UDXAd ad, UDXReward reward) {
             if(reward.isReward()) {
                 log( "Rewarded user with reward: ");
                 hasGrantedReward = true;

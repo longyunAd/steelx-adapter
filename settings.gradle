@@ -1,4 +1,4 @@
-rootProject.name = "SteelX Adapter SDK"
+rootProject.name = "UDX Adapter SDK"
 include ':app'
 include ':ironsource'
 include ':max'

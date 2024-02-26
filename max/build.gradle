@@ -29,7 +29,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     compileOnly("com.applovin:applovin-sdk:+@aar")
-    compileOnly "com.gitee.longyunAd:steelx:1.0.0"
+    compileOnly "com.gitee.longyunAd:udx:1.0.0"
 }
 
 afterEvaluate {
