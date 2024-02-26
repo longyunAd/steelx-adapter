@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootView"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.longyun.steelx.MainActivity">
+
+    <Button
+        android:id="@+id/btn_init"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="初始化" />
+
+    <Button
+        android:id="@+id/btn_load_reward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="加载激励视频" />
+
+    <Button
+        android:id="@+id/btn_load_interstitial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="加载插屏视频" />
+
+    <Button
+        android:id="@+id/btn_load_interstitial_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="加载插屏图片"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="test" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_shake"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="摇一摇" />
+
+        <Button
+            android:id="@+id/btn_twist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="扭一扭" />
+
+        <Button
+            android:id="@+id/btn_wipe_up"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上划" />
+    </LinearLayout>
+</LinearLayout>

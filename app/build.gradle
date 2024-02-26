@@ -1,0 +1,49 @@
+apply plugin: 'com.android.application'
+apply from: "../constants.gradle"
+
+android {
+    compileSdkVersion project.ext.compileSdkVersion
+
+    defaultConfig {
+//        applicationId "anzhuo.com"
+        applicationId "anzhuo.com"
+        minSdkVersion 21
+        targetSdkVersion project.ext.targetSdkVersion
+        versionCode project.ext.mSdkVersionCode
+        versionName project.ext.mSdkVersion
+        multiDexEnabled true
+    }
+    signingConfigs {
+        config {
+            keyAlias 'steellord'
+            keyPassword 'ly@2023'
+            storeFile file('../steellord.jks')
+            storePassword 'ly@2023'
+        }
+    }
+    buildTypes {
+        debug {
+            multiDexEnabled true
+            minifyEnabled false
+            signingConfig signingConfigs.config
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+
+    implementation "com.gitee.longyunAd:steelx:1.0.0"
+}
