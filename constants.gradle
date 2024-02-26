@@ -28,7 +28,7 @@ project.ext {
     if (gradle.ext.has('exoplayerModulePrefix')) {
         modulePrefix += gradle.ext.exoplayerModulePrefix
     }
-    mSdkVersionCode = 176
-    mSdkVersion = "1.7.6"
+    mSdkVersionCode = 100
+    mSdkVersion = "1.0.0"
 
 }
