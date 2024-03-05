@@ -18,7 +18,7 @@ public class UDXCustomAdapter extends BaseAdapter {
 
     @Override
     public void init(@NonNull AdData adData, @NonNull Context context, @Nullable NetworkInitializationListener networkInitializationListener) {
-       String appId = (String) adData.getConfiguration().get("appID");
+       String appId = (String) adData.getConfiguration().get("appId");
 //        Log.i(TAG, "init->appId:"+appId +" "+ GsonUtils.toJson(adData));
 
         UDXConfig config = new UDXConfig.Builder()

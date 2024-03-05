@@ -31,7 +31,7 @@ public class UDXCustomInterstitial extends BaseInterstitial<UDXCustomAdapter> {
     @Override
     public void loadAd(@NonNull AdData adData, @NonNull Activity activity, @NonNull InterstitialAdListener listener) {
         mActivity = activity;
-        String placementId = (String) adData.getConfiguration().get("placementID");
+        String placementId = (String) adData.getConfiguration().get("placementId");
         Log.i(TAG, "loadAd->placementId:"+placementId);
         new UDXInterstitialAd().loadAd(placementId, null, new UDXInterstitialAdListener(){
 

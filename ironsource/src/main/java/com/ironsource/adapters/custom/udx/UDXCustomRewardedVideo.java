@@ -30,7 +30,7 @@ public class UDXCustomRewardedVideo extends BaseRewardedVideo<UDXCustomAdapter>{
     @Override
     public void loadAd(@NonNull AdData adData, @NonNull Activity activity, @NonNull RewardedVideoAdListener listener) {
         mActivity = activity;
-        String placementId = (String) adData.getConfiguration().get("placementID");
+        String placementId = (String) adData.getConfiguration().get("placementId");
         Log.i(TAG, "loadAd->placementId:"+placementId);
         new UDXRewardedAd().loadAd(placementId, null, new UDXRewardedAdListener() {
 
