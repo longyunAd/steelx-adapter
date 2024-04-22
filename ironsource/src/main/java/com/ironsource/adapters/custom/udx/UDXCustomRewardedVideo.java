@@ -10,16 +10,13 @@ import com.ironsource.mediationsdk.adunit.adapter.listener.RewardedVideoAdListen
 import com.ironsource.mediationsdk.adunit.adapter.utility.AdData;
 import com.ironsource.mediationsdk.adunit.adapter.utility.AdapterErrorType;
 import com.ironsource.mediationsdk.model.NetworkSettings;
-import com.longyun.udx.sdk.UDXAd;
-import com.longyun.udx.sdk.UDXError;
-import com.longyun.udx.sdk.reward.UDXReward;
-import com.longyun.udx.sdk.reward.UDXRewardedAd;
-import com.longyun.udx.sdk.reward.UDXRewardedAdListener;
+import com.longyun.udx.sdk.AdError;
+import com.longyun.udx.sdk.UDXRewardedAd;
 
 public class UDXCustomRewardedVideo extends BaseRewardedVideo<UDXCustomAdapter>{
 
     private final String TAG = UDXCustomRewardedVideo.class.getSimpleName();
-    private UDXAd mAd;
+    private UDXRewardedAd mRewardedAd;
     private boolean isAdAvailable;
     private Activity mActivity;
 
@@ -32,28 +29,23 @@ public class UDXCustomRewardedVideo extends BaseRewardedVideo<UDXCustomAdapter>{
         mActivity = activity;
         String placementId = (String) adData.getConfiguration().get("placementId");
         Log.i(TAG, "loadAd->placementId:"+placementId);
-        new UDXRewardedAd().loadAd(placementId, null, new UDXRewardedAdListener() {
-
+        mRewardedAd = new UDXRewardedAd(activity, placementId);
+        mRewardedAd.setListener(new UDXRewardedAd.Listener() {
             @Override
-            public void onRewardedVideoStarted(UDXAd ad) {
-
+            public void onAdHidden() {
+                if(listener != null)
+                    listener.onAdClosed();
             }
 
             @Override
-            public void onRewardedVideoCompleted(UDXAd ad) {
-
-            }
-
-            @Override
-            public void onUserRewarded(UDXAd ad, UDXReward reward) {
+            public void onUserRewarded() {
                 if(listener != null) {
                     listener.onAdRewarded();
                 }
             }
 
             @Override
-            public void onAdLoaded(UDXAd ad) {
-                mAd = ad;
+            public void onAdLoaded() {
                 isAdAvailable = true;
 
                 if(listener != null){
@@ -62,47 +54,41 @@ public class UDXCustomRewardedVideo extends BaseRewardedVideo<UDXCustomAdapter>{
             }
 
             @Override
-            public void onAdFailedToLoad(String adUnitId, UDXError error) {
+            public void onAdLoadFailed() {
                 if(listener != null) {
                     //ADAPTER_ERROR_TYPE_NO_FILL 无填充
                     //ADAPTER_ERROR_TYPE_AD_EXPIRED 过期
                     //ADAPTER_ERROR_TYPE_INTERNAL 其他
-                    listener.onAdLoadFailed(AdapterErrorType.ADAPTER_ERROR_TYPE_NO_FILL, error.getCode(), error.getMessage());
+                    listener.onAdLoadFailed(AdapterErrorType.ADAPTER_ERROR_TYPE_NO_FILL, AdError.NO_FILL.getErrorCode(), AdError.NO_FILL.getErrorMessage());
                 }
             }
 
             @Override
-            public void onAdDisplayFailed(UDXAd ad, UDXError error) {
-                if(listener != null) {
-                    listener.onAdShowFailed(error.getCode(), error.getMessage());
-                }
-            }
-
-            @Override
-            public void onAdDisplayed(UDXAd ad) {
+            public void onAdDisplayed() {
                 if(listener != null)
                     listener.onAdOpened();
             }
 
             @Override
-            public void onAdClicked(UDXAd ad) {
+            public void onAdClicked() {
                 if(listener != null)
                     listener.onAdClicked();
             }
 
             @Override
-            public void onAdHidden(UDXAd ad) {
-                if(listener != null)
-                    listener.onAdClosed();
+            public void onAdError(AdError adError) {
+                if(listener != null) {
+                    listener.onAdShowFailed(adError.getErrorCode(), adError.getErrorMessage());
+                }
             }
         });
     }
 
     @Override
     public void showAd(@NonNull AdData adData, @NonNull RewardedVideoAdListener listener) {
-        if (mAd != null && mActivity != null) {
-            mAd.show(mActivity);
-            mAd = null;
+        if (mRewardedAd != null && mActivity != null) {
+            mRewardedAd.showAd();
+            mRewardedAd = null;
         }
     }
 

@@ -9,8 +9,8 @@ import androidx.annotation.Nullable;
 import com.ironsource.mediationsdk.adunit.adapter.BaseAdapter;
 import com.ironsource.mediationsdk.adunit.adapter.listener.NetworkInitializationListener;
 import com.ironsource.mediationsdk.adunit.adapter.utility.AdData;
-import com.longyun.udx.sdk.UDXConfig;
-import com.longyun.udx.sdk.UDXSdk;
+import com.longyun.udx.sdk.SdkInitListener;
+import com.longyun.udx.sdk.UDX;
 
 public class UDXCustomAdapter extends BaseAdapter {
 
@@ -21,23 +21,17 @@ public class UDXCustomAdapter extends BaseAdapter {
        String appId = (String) adData.getConfiguration().get("appId");
 //        Log.i(TAG, "init->appId:"+appId +" "+ GsonUtils.toJson(adData));
 
-        UDXConfig config = new UDXConfig.Builder()
-                .setAppId(appId)
-                .build();
-        UDXSdk.init(context, config, new UDXSdk.UDXInitCallback() {
-
-            @Override
-            public void success() {
+        UDX.init(context, appId, new SdkInitListener() {
+            public void onInitSuccess() {
                 Log.i(TAG, "udx init success: ");
                 if(networkInitializationListener != null)
                     networkInitializationListener.onInitSuccess();
             }
 
-            @Override
-            public void fail(int code, String msg) {
-                Log.i(TAG, "udx init fail: " + code + " " + msg);
+            public void onInitError() {
+                Log.i(TAG, "udx init fail: ");
                 if(networkInitializationListener != null)
-                    networkInitializationListener.onInitFailed(code, msg);
+                    networkInitializationListener.onInitFailed(-1, "udx init fail");
             }
         });
     }
@@ -45,12 +39,12 @@ public class UDXCustomAdapter extends BaseAdapter {
     @Nullable
     @Override
     public String getNetworkSDKVersion() {
-        return UDXSdk.getSDKVersion();
+        return UDX.getSdkVersion();
     }
 
     @NonNull
     @Override
     public String getAdapterVersion() {
-        return "1.0.0";
+        return "1.1.0";
     }
 }

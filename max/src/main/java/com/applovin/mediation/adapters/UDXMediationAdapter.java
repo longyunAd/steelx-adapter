@@ -17,18 +17,11 @@ import com.applovin.mediation.adapter.parameters.MaxAdapterResponseParameters;
 import com.applovin.mediation.adapter.parameters.MaxAdapterSignalCollectionParameters;
 import com.applovin.sdk.AppLovinSdk;
 import com.applovin.sdk.AppLovinSdkUtils;
-import com.longyun.udx.sdk.BidManager;
-import com.longyun.udx.sdk.UDXAd;
-import com.longyun.udx.sdk.UDXConfig;
-import com.longyun.udx.sdk.UDXError;
-import com.longyun.udx.sdk.UDXSdk;
-import com.longyun.udx.sdk.inters.UDXInterstitialAd;
-import com.longyun.udx.sdk.inters.UDXInterstitialAdListener;
-import com.longyun.udx.sdk.inters.UDXInterstitialRequest;
-import com.longyun.udx.sdk.reward.UDXReward;
-import com.longyun.udx.sdk.reward.UDXRewardedAd;
-import com.longyun.udx.sdk.reward.UDXRewardedAdListener;
-import com.longyun.udx.sdk.reward.UDXRewardedRequest;
+import com.longyun.udx.sdk.AdError;
+import com.longyun.udx.sdk.SdkInitListener;
+import com.longyun.udx.sdk.UDX;
+import com.longyun.udx.sdk.UDXInterstitialAd;
+import com.longyun.udx.sdk.UDXRewardedAd;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -81,26 +74,19 @@ public class UDXMediationAdapter
 //                builder.setDoNotSell( isDoNotSell ? 1 : 0 );
 //            }
 
-            UDXConfig config = new UDXConfig.Builder()
-                    .setAppId(appId)
-                    .setDebug(parameters.isTesting())
-                    .build();
-            UDXSdk.init(activity.getApplicationContext(), config, new UDXSdk.UDXInitCallback() {
-
-                @Override
-                public void success() {
+            UDX.init(activity.getApplicationContext(), appId, new SdkInitListener() {
+                public void onInitSuccess() {
                     log( "SDK initialized" );
 
                     status = InitializationStatus.INITIALIZED_SUCCESS;
                     onCompletionListener.onCompletion( status, null );
                 }
 
-                @Override
-                public void fail(int code, String msg) {
-                    log( "SDK failed to initialize with code: " + code + " and message: " + msg );
+                public void onInitError() {
+                    log( "SDK failed to initialize");
 
                     status = InitializationStatus.INITIALIZED_FAILURE;
-                    onCompletionListener.onCompletion( status, msg );
+                    onCompletionListener.onCompletion( status, "SDK failed to initialize" );
                 }
             });
         }
@@ -114,13 +100,13 @@ public class UDXMediationAdapter
     @Override
     public String getSdkVersion()
     {
-        return UDXSdk.getSDKVersion();
+        return UDX.getSdkVersion();
     }
 
     @Override
     public String getAdapterVersion()
     {
-        return "1.0.0";
+        return "1.1.0";
     }
 
     @Override
@@ -140,8 +126,10 @@ public class UDXMediationAdapter
     {
         log( "Collecting signal..." );
 
-        String signal = BidManager.getBiddingToken();
-        callback.onSignalCollected( signal );
+//        String signal = BidManager.getBiddingToken();
+//        callback.onSignalCollected( signal );
+
+        callback.onSignalCollected( "" );
     }
 
     //endregion
@@ -156,12 +144,13 @@ public class UDXMediationAdapter
         boolean isBidding = AppLovinSdkUtils.isValidString( bidResponse );
         log( "Loading " + ( isBidding ? "bidding " : "" ) + "interstitial ad for code id \"" + codeId + "\"..." );
 
-        UDXInterstitialRequest request = new UDXInterstitialRequest();
-        request.setUserId(getWrappingSdk().getUserIdentifier());
+//        UDXInterstitialRequest request = new UDXInterstitialRequest();
+//        request.setUserId(getWrappingSdk().getUserIdentifier());
         interstitialAdListener = new InterstitialAdListener( codeId, listener );
 
-        interstitialAd = new UDXInterstitialAd();
-        interstitialAd.loadAd( codeId, request, interstitialAdListener);
+        interstitialAd = new UDXInterstitialAd(activity, codeId);
+        interstitialAd.setListener(interstitialAdListener);
+        interstitialAd.loadAd();
     }
 
     @Override
@@ -171,7 +160,7 @@ public class UDXMediationAdapter
         log( "Showing interstitial ad for code id \"" + codeId + "\"..." );
 
 //        interstitialAd.setAdInteractionListener( interstitialAdListener );
-        interstitialAd.show( activity );
+        interstitialAd.showAd();
     }
 
     //endregion
@@ -186,24 +175,25 @@ public class UDXMediationAdapter
         boolean isBidding = AppLovinSdkUtils.isValidString( bidResponse );
         log( "Loading " + ( isBidding ? "bidding " : "" ) + "rewarded ad for code id \"" + codeId + "\"..." );
 
-//        PAGConfig.setUserData( createAdConfigData( parameters.getServerParameters(), false ) );
+////        PAGConfig.setUserData( createAdConfigData( parameters.getServerParameters(), false ) );
+////
+////        Map<String, Object> extraInfo = new HashMap<>();
+////        extraInfo.put( "user_id", getWrappingSdk().getUserIdentifier() );
 //
-//        Map<String, Object> extraInfo = new HashMap<>();
-//        extraInfo.put( "user_id", getWrappingSdk().getUserIdentifier() );
-
-        UDXRewardedRequest request = new UDXRewardedRequest();
-        request.setUserId(getWrappingSdk().getUserIdentifier());
-//        request.setExtraInfo( extraInfo );
-//
-//        if ( isBidding )
-//        {
-//            request.setAdString( bidResponse );
-//        }
+//        UDXRewardedRequest request = new UDXRewardedRequest();
+//        request.setUserId(getWrappingSdk().getUserIdentifier());
+////        request.setExtraInfo( extraInfo );
+////
+////        if ( isBidding )
+////        {
+////            request.setAdString( bidResponse );
+////        }
 
         rewardedAdListener = new RewardedAdListener( codeId, listener );
 //        PAGRewardedAd.loadAd( codeId, request, rewardedAdListener );
-        rewardedAd = new UDXRewardedAd();
-        rewardedAd.loadAd( codeId, request, rewardedAdListener);
+        rewardedAd = new UDXRewardedAd(activity, codeId);
+        rewardedAd.setListener(rewardedAdListener);
+        rewardedAd.loadAd();
     }
 
     @Override
@@ -216,7 +206,7 @@ public class UDXMediationAdapter
         configureReward( parameters );
 
 //        rewardedAd.setAdInteractionListener( rewardedAdListener );
-        rewardedAd.show( activity );
+        rewardedAd.showAd();
     }
 
     //endregion
@@ -264,8 +254,7 @@ public class UDXMediationAdapter
     //endregion
 
     private class InterstitialAdListener
-            implements UDXInterstitialAdListener
-    {
+            implements UDXInterstitialAd.Listener {
         private final String                         codeId;
         private final MaxInterstitialAdapterListener listener;
 
@@ -276,58 +265,48 @@ public class UDXMediationAdapter
         }
 
         @Override
-        public void onAdLoaded(final UDXAd ad)
-        {
-            if ( ad == null )
-            {
-                log( "Interstitial ad" + "(" + codeId + ")" + " NO FILL'd" );
-                listener.onInterstitialAdLoadFailed( MaxAdapterError.NO_FILL );
-
-                return;
-            }
-
+        public void onAdLoaded() {
             log( "Interstitial ad loaded: " + codeId );
-            interstitialAd = (UDXInterstitialAd) ad;
 
             listener.onInterstitialAdLoaded();
         }
 
         @Override
-        public void onAdFailedToLoad(String adUnitId, UDXError error) {
-            MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
+        public void onAdLoadFailed() {
+            MaxAdapterError adapterError = toMaxError(AdError.NO_FILL.getErrorCode(), AdError.NO_FILL.getErrorMessage() );
             log( "Interstitial ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onInterstitialAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayFailed(UDXAd ad, UDXError error) {
-            MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
-            log( "Interstitial ad (" + codeId + ") failed to load with error: " + adapterError );
-            listener.onInterstitialAdLoadFailed( adapterError );
-        }
-
-        @Override
-        public void onAdDisplayed(UDXAd ad) {
+        public void onAdDisplayed() {
             log( "Interstitial ad displayed: " + codeId );
             listener.onInterstitialAdDisplayed();
         }
 
         @Override
-        public void onAdClicked(UDXAd ad) {
+        public void onAdClicked() {
             log( "Interstitial ad clicked: " + codeId );
             listener.onInterstitialAdClicked();
         }
 
         @Override
-        public void onAdHidden(UDXAd ad) {
+        public void onAdError(AdError error) {
+            MaxAdapterError adapterError = toMaxError( error.getErrorCode(), error.getErrorMessage() );
+            log( "Interstitial ad (" + codeId + ") failed to load with error: " + adapterError );
+            listener.onInterstitialAdLoadFailed( adapterError );
+        }
+
+        @Override
+        public void onAdHidden() {
             log( "Interstitial ad hidden: " + codeId );
             listener.onInterstitialAdHidden();
         }
     }
 
     private class RewardedAdListener
-            implements UDXRewardedAdListener
-    {
+            implements UDXRewardedAd.Listener {
+
         private final String                     codeId;
         private final MaxRewardedAdapterListener listener;
 
@@ -340,50 +319,42 @@ public class UDXMediationAdapter
         }
 
         @Override
-        public void onAdLoaded(UDXAd ad) {
-            if ( ad == null )
-            {
-                log( "Rewarded ad" + "(" + codeId + ")" + " NO FILL'd" );
-                listener.onRewardedAdLoadFailed( MaxAdapterError.NO_FILL );
-
-                return;
-            }
-
+        public void onAdLoaded() {
             log( "Rewarded ad loaded: " + codeId );
-            rewardedAd = (UDXRewardedAd) ad;
 
             listener.onRewardedAdLoaded();
         }
 
         @Override
-        public void onAdFailedToLoad(String adUnitId, UDXError error) {
-            MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
+        public void onAdLoadFailed() {
+            MaxAdapterError adapterError = toMaxError( AdError.NO_FILL.getErrorCode(), AdError.NO_FILL.getErrorMessage() );
             log( "Rewarded ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onRewardedAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayFailed(UDXAd ad, UDXError error) {
-            MaxAdapterError adapterError = toMaxError( error.getCode(), error.getMessage() );
+        public void onAdError(AdError error) {
+            MaxAdapterError adapterError = toMaxError( error.getErrorCode(), error.getErrorMessage() );
             log( "Rewarded ad (" + codeId + ") failed to load with error: " + adapterError );
             listener.onRewardedAdLoadFailed( adapterError );
         }
 
         @Override
-        public void onAdDisplayed(UDXAd ad) {
+        public void onAdDisplayed() {
             log( "Rewarded ad displayed: " + codeId );
 
             listener.onRewardedAdDisplayed();
+//            listener.onRewardedAdVideoStarted();
         }
 
         @Override
-        public void onAdClicked(UDXAd ad) {
+        public void onAdClicked() {
             log( "Rewarded ad clicked: " + codeId );
             listener.onRewardedAdClicked();
         }
 
         @Override
-        public void onAdHidden(UDXAd ad) {
+        public void onAdHidden() {
             log( "Rewarded ad hidden: " + codeId );
 
             listener.onRewardedAdVideoCompleted();
@@ -399,25 +370,15 @@ public class UDXMediationAdapter
         }
 
         @Override
-        public void onRewardedVideoStarted(UDXAd ad) {
-            listener.onRewardedAdVideoStarted();
-        }
-
-        @Override
-        public void onRewardedVideoCompleted(UDXAd ad) {
-
-        }
-
-        @Override
-        public void onUserRewarded(UDXAd ad, UDXReward reward) {
-            if(reward.isReward()) {
-                log( "Rewarded user with reward: ");
+        public void onUserRewarded() {
+//            if(reward.isReward()) {
+//                log( "Rewarded user with reward: ");
                 hasGrantedReward = true;
-            } else {
-                log( "Failed to reward user with error: ");
-//                log( "Failed to reward user with error: " + code + " " + message );
-                hasGrantedReward = false;
-            }
+//            } else {
+//                log( "Failed to reward user with error: ");
+////                log( "Failed to reward user with error: " + code + " " + message );
+//                hasGrantedReward = false;
+//            }
         }
     }
 }
