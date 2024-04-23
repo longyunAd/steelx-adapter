@@ -31,7 +31,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     compileOnly 'com.ironsource.sdk:mediationsdk:7.5.1'
-    compileOnly 'com.gitee.longyunAd:udx:1.1.0.0'
+    compileOnly 'com.gitee.longyunAd:udx:1.1.0.1'
 }
 
 afterEvaluate {
